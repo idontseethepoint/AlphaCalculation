@@ -1,0 +1,181 @@
+\documentclass[11pt, oneside]{article}   	% use "amsart" instead of "article" for AMSLaTeX format
+\usepackage{geometry}                		% See geometry.pdf to learn the layout options. There are lots.
+\geometry{letterpaper}                   		% ... or a4paper or a5paper or ... 
+\usepackage{amsmath}
+%\geometry{landscape}                		% Activate for for rotated page geometry
+%\usepackage[parfill]{parskip}    		% Activate to begin paragraphs with an empty line rather than an indent
+\usepackage{graphicx}				% Use pdf, png, jpg, or eps§ with pdflatex; use eps in DVI mode
+								% TeX will automatically convert eps --> pdf in pdflatex		
+\usepackage{amssymb}
+
+%\date{}							% Activate to display a given date or no date
+
+\begin{document}
+\title{Calculation of $\alpha_{ODT}$}
+\maketitle
+\section{Notation}
+
+
+       $\epsilon_{ij}$ :        Interaction strength between type i and j particles
+
+\noindent $\alpha = \epsilon_{AB}-\epsilon_{AA} = \epsilon_{AB}-\epsilon_{BB}$ (Incompatibility parameter)
+
+\noindent $\alpha_{ODT}$ :        Value of $\alpha$ at the ODT with no field
+
+\noindent $E_{EXT}$ :       Energy of the external field per mole
+ 
+ \noindent $h$ :         Field strength coefficient
+ 
+ \noindent $\left<...\right>_{O}, \left<...\right>_{D}$ :    Average over simulation starting from ordered or disordered phase
+ 
+ \noindent $h^*$:         Value of h at ODT for a given value of $\alpha$
+ 
+ \noindent $g_O, g_D$ :        Free energy per mole for ordered and disordered phases
+ 
+\section{Overview of Procedure}
+1. Get approximate bounds for $\alpha_{ODT}$ from simulations by checking for spontaneous formation of the ordered/disordered phase from the opposite phase. Choose a value of $\alpha$ that you know is below $\alpha_{ODT}$, but being closer will be better.
+\vspace{5mm}
+
+2. For the value of $\alpha$ you choose to work at, run a small system at different values of the field strength h, and find a value high enough to give spontaneous formation of the ordered phase. Also save the pair energy and field energy as a function of h from these simulations, and run from both an ordered and disordered initial configuration.
+\vspace{5mm}
+
+3. Run simulations with one dimension much longer than the others, and modulate the field strength in this direction. Have the value of h be enough to spontaneously order the system in one region, and zero in another, with some interface region
+\vspace{5mm}
+
+4. Calculate the pressure difference between the two regions in these independent simulations. You will need to measure if very accurately because it is small
+\vspace{5mm}
+
+5. Use the equations
+\begin{equation}
+\frac{\partial g_{O}}{\partial h} = \left<E_{EXT}\right>_O
+\end{equation}
+\begin{equation}
+\frac{\partial g_{D}}{\partial h} = \left<E_{EXT}\right>_D
+\end{equation}
+to solve for $h^*$, the field strength at the ODT, in
+\begin{equation}
+v\Delta P=\int_{0}^{h^*}\frac{\partial g_{D}}{\partial h}dh + \int_{h^*}^{h_{MAX}}\frac{\partial g_{O}}{\partial h}
+\end{equation}
+Using the average external energy as a function of h calculated in step 2 
+\vspace{5mm}
+
+6. Use the Clausius-Clapeyron like relation
+\begin{equation}
+\frac{\partial \alpha}{\partial h} = \frac{\left<E_{EXT}\right>_D-\left<E_{EXT}\right>_O}{\left<U_{AB}\right>_O-\left<U_{EXT}\right>_D}
+\end{equation}
+for the ODT to extrapolate to h=0 and $\alpha_{ODT}$
+
+
+\section{Calculation of $\alpha_{ODT}$}
+
+\includegraphics[height=200pt]{/Users/michaelmcgovern/Tex/ExternalSchematic.png}
+%\subsection{}
+Because there is a single component whose molecules are free do diffuse though the system, the chemical potential must be equal everywhere. Therefore
+\begin{equation}
+\mu_A=\mu_B\equiv\mu
+\end{equation}
+The Gibbs free energy depends on these parameters:
+\begin{equation}
+G=G(T,P,h,\lambda)
+\end{equation}
+If the system is big enough that finite size effects can be ignored, then when the system is scaled up in size by some amount, the Gibbs free energy will be scaled by this same factor, but only if all of the macroscopic proportions in the system remain fixed. 
+\begin{gather}
+T,P \text{ constant}\\
+N\rightarrow (1+\epsilon)N\\
+\lambda \rightarrow (1+\epsilon)\lambda \\
+\Rightarrow G\rightarrow (1+\epsilon)G
+\end{gather}
+(For simplicity, the left interface is at 0 while the right interface is at $\lambda$, so only the right interface coordinate needs to be scaled.)
+
+\begin{gather}
+\mu \equiv \left(\frac{\partial G}{\partial N}\right)_{T,P,h,\lambda}\\
+\end{gather}
+
+However, unlike T,P, and h, $\lambda$ is an extensive quantity, so the chemical potential is not equal to the molar free energy when $\lambda$ is considered a variable.
+\begin{equation}
+G\neq\mu N
+\end{equation}
+
+
+G is also a sum of molar free energies in the bulk A, bulk B, and interface, I, regions. For now, assume the interface contains a negligible fraction of the number of atoms in the system, although this proportion strictly speaking changes as the total system size changes. Under this assumption:
+
+\begin{gather}
+G = g_AN_A+g_BN_B\\
+N_A+N_B=N\\
+N_B\approx\frac{\lambda}{L}N\\
+\Rightarrow \mu N = g_AN_A+g_BN_B\\
+\mu = g_A\left(1-\frac{\lambda}{L}\right)+g_B\frac{\lambda}{L}
+\end{gather}
+
+Since changing $\lambda$ alone does not preserve the macroscopic proportionality to the original system, it is possible that
+
+\begin{gather}
+\left(\frac{\partial G}{\partial \lambda}\right)_{T,P,h,N}\neq 0\\
+\end{gather}
+
+But
+\begin{gather}
+\left(\frac{\partial G}{\partial \lambda}\right)_{T,P,h,N}=N\frac{\partial}{\partial\lambda} \left[g_A\left(1-\frac{\lambda}{L}\right)+g_B\frac{\lambda}{L}\right] \\
+=N\frac{g_B-g_A}{L}\neq 0
+\end{gather}
+So the molar Gibbs free energies do not need to be equal to each other or to the chemical potential.
+\section{Derivation in Grand Canonical Ensemble}
+We have
+\begin{equation}
+\left(\frac{\partial \Phi}{\partial \lambda}\right)_{T,P} = <\frac{\partial H}{\partial \lambda}>
+\end{equation}
+Again, assume there are two bulk phases with the interface being negligible, and the grand potential can be split up:
+\begin{equation}
+\Phi = \Phi_A+\Phi_B
+\end{equation}
+Define grand potentials per unit volume:
+\begin{equation}
+\phi_A\equiv\frac{\Phi_A}{V_A} \quad \phi_B\equiv\frac{\Phi_B}{V_B} 
+\end{equation}
+Then
+\begin{equation}
+\left(\frac{\partial\Phi}{\partial\lambda}\right)_{T,V,\mu,h} = \left(\phi_B-\phi_A\right)A
+\end{equation}
+Next use
+\begin{equation}
+d\phi=-Pdv-sdT-Nd\mu+\left(\frac{\partial\phi}{\partial h}\right)_{T,v,\mu,\lambda}
+\end{equation}
+
+Because of the assumption of bulk behavior, the specific volumes of each of the phases will remain constant, so, with no phase transition and assuming linear behavior
+
+\begin{equation}
+\phi_B-\phi_A=\left(\frac{\partial\phi}{\partial h}\right)_{T,v,\mu,\lambda}h
+\end{equation}
+
+For the phase transition, introduce the notation
+
+\begin{gather}
+\left(\frac{\partial\phi}{\partial h}\right)_{T,v,\mu,\lambda}=\dot{\phi}_O \text{     [for the ordered phase]}\\
+\left(\frac{\partial\phi}{\partial h}\right)_{T,v,\mu,\lambda}=\dot{\phi}_D \text{     [for the disordered phase]}
+\end{gather}
+
+If region B contains the ordered phase, then
+
+\begin{gather}
+\phi_B-\phi_A = \dot{\phi_D}h^*+\dot{\phi}_O(h-h^*)\\
+\phi_B-\phi_A = \dot{\phi_O}h+h^*(\dot{\phi}_D - \dot{\phi_O})
+\end{gather}
+
+Defining the force per unit area as f, this gives
+
+\begin{equation}
+h^*=\frac{f-\dot{\phi}_Oh}{\dot{\phi}_D-\dot{\phi}_O}
+\end{equation}
+
+This is not necessarily inconsistent with the previous result because it is a different process (the system as a whole may expand or contract as the B region expands in the canonical ensemble, while the system may gain or lose particles in the grand canonical ensemble) and the potentials are different.
+
+However, there was an algebra mistake in the last step of the earlier result, and it actually should be
+
+\begin{gather}
+h^*= \frac{f-v\Delta P-\dot{g}_Oh}{\dot{g}_D-\dot{g}_O}
+\end{gather}
+
+
+
+
+\end{document}  
